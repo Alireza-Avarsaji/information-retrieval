@@ -91,6 +91,13 @@ class NormalizeHandler:
        return x
 
 
+    def stem(self, token_list):
+        list = token_list
+        for token in list:
+            list[list.index(token)] = self.stemmer.stem(token)
+        return list
+
+
     def base_normalizer(self):
        index = 0
 
@@ -114,7 +121,6 @@ class NormalizeHandler:
                    # Add doc ID to postings list.
                    self.pos_index[token][1][index] = [pos]
            index += 1
-
 
 
     def write_in_file(self):
