@@ -100,26 +100,28 @@ class NormalizeHandler:
 
     def base_normalizer(self):
        index = 0
+       inverted_index = {}
        for row in openpyxl.load_workbook(self.file).active.iter_rows():
            curr_doc_token_list = self.stem(self.stop_words(self.remove_punctuation(row[0].value)))
            for pos, token in enumerate \
                        (curr_doc_token_list):
-               if token in self.pos_index:
-                   if index in self.pos_index[token][0]:
-                       self.pos_index[token][0][index][0] += 1
+               if token in inverted_index:
+                   if index in inverted_index[token][0]:
+                       inverted_index[token][0][index][0] += 1
 
                    else:
-                       self.pos_index[token][0][index] = [1]
+                       inverted_index[token][0][index] = [1]
                else:
-                   self.pos_index[token] = []
-                   self.pos_index[token].append({})
-                   self.pos_index[token][0][index] = [1]
+                   inverted_index[token] = []
+                   inverted_index[token].append({})
+                   inverted_index[token][0][index] = [1]
            index += 1
+       return inverted_index
 
 
-    def write_in_file(self):
+    def write_in_file(self, inverted_index):
         file = open("indexed_data.pkl", "wb")
-        pickle.dump(self.pos_index, file)
+        pickle.dump(inverted_index, file)
         file.close()
 
 
